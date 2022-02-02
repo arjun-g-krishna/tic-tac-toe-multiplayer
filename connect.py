@@ -68,7 +68,7 @@ class TicTacToe:
 
     def check_valid_move(self,move):
         # return self.board[int(move[0])][int(move[1])] != " "
-        if (move[0] > 3 or move[1] > 3) or self.board[int(move[0])][int(move[1])] != " ":
+        if (int(move[0]) > 3 or int(move[1]) > 3) or self.board[int(move[0])][int(move[1])] != " ":
             return False
         return True    
 
