@@ -1,3 +1,3 @@
 # tic-tac-toe-multiplayer
 
-A multplayer tic-tac-toe script written in python
+A multplayer tic-tac-toe game making use of sockets
