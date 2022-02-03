@@ -2,7 +2,7 @@ import socket
 import threading
 
 class TicTacToe:
-
+    
     def __init__(self):
         self.board = [ [" "," "," "], [" "," "," "], [" "," "," "] ]  
         self.turn = "X"
@@ -12,6 +12,8 @@ class TicTacToe:
         self.game_over = False
         self.counter = 0
 
+    # Function host_game() hosts the game using a TCP connection at the specified host and port
+    
     def host_game(self,host,port):
         server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         server.bind((host,port))
@@ -21,14 +23,18 @@ class TicTacToe:
         self.opponent = "O"
         threading.Thread(target = self.handle_connection,args =(client,)).start()
         server.close()
-
+        
+    # Connects to the game
+    
     def connect_to_game(self,host,port):
         client = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         client.connect((host,port))
         self.you = "O"    
         self.opponent = "X"
         threading.Thread(target = self.handle_connection,args =(client,)).start()
-
+        
+    # Game logic. Takes in move and switches between two players untill game_over is true
+    
     def handle_connection(self,client):
         while not self.game_over:
             if self.turn == self.you:
@@ -47,7 +53,10 @@ class TicTacToe:
                     self.apply_move(data.decode('utf-8').split(','),self.opponent)
                     self.turn = self.you
         client.close()
-
+        
+    # Game logic. Counter variable is used to check for a tie
+    # Checks for winner or tie and prints it
+    
     def apply_move(self,move,player):
         if self.game_over:
             return
@@ -65,24 +74,31 @@ class TicTacToe:
             if self.counter == 9:
                 print("Tie")                                            
                 exit()
-
+                
+    # Checks if the move is valid. The first condition checks for out-of-bounds error and second checks
+    # if we are attempting to make a move on already played cell.
+    
     def check_valid_move(self,move):
-        # return self.board[int(move[0])][int(move[1])] != " "
-        if (int(move[0]) > 3 or int(move[1]) > 3) or self.board[int(move[0])][int(move[1])] != " ":
+        if (int(move[0]) > 2 or int(move[1]) > 2) or self.board[int(move[0])][int(move[1])] != " ":
             return False
         return True    
 
+    #Checking for winner
+    
     def check_if_won(self):
+        # Checking for all row matches
         for row in range(3):
             if self.board[row][0] == self.board[row][1] == self.board[row][2] != " ":
                 self.winner = self.board[row][0]
                 self.game_over = True
                 return True
+        # Checking column matches        
         for col in range(3):
             if self.board[0][col] == self.board[1][col] == self.board[2][col] != " ":
                 self.winner = self.board[0][col]
                 self.game_over = True
                 return True
+        # Two if conditions check both diagonals        
         if self.board[0][0] == self.board[1][1] == self.board[2][2] != " ":
             self.winner =  self.board[0][0]
             self.game_over = True
@@ -92,10 +108,13 @@ class TicTacToe:
             self.game_over = True
             return True
         return False
+
+    # Dislplay the board    
     def print_board(self):
         for row in range(3):
             print(" | ".join(self.board[row]))
             if row != 2:
-                print("---------")       
+                print("---------")   
+# Run the game!                    
 game = TicTacToe()
 game.connect_to_game('localhost',3000)
